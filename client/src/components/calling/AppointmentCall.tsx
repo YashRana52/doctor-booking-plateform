@@ -28,7 +28,7 @@ function AppointmentCall({
     async (appointmentId: string) => {
       await joinConsultation(appointmentId);
     },
-    [joinConsultation]
+    [joinConsultation],
   );
 
   const initializeCall = useCallback(
@@ -61,7 +61,7 @@ function AppointmentCall({
           serverSecret,
           appointment.zegoRoomId,
           currentUser.id,
-          currentUser.name
+          currentUser.name,
         );
 
         const zp = ZegoUIKitPrebuilt.create(kitToken);
@@ -104,7 +104,12 @@ function AppointmentCall({
               zpRef.current?.destroy();
             } catch {}
 
-            window.location.href = "/dashboard"; // redirect
+            const redirectPath =
+              currentUser.role === "doctor"
+                ? "/doctor/dashboard"
+                : "/patient/dashboard";
+
+            window.location.href = redirectPath;
           },
 
           // Don’t auto-close UI
@@ -126,7 +131,7 @@ function AppointmentCall({
       currentUser.id,
       currentUser.name,
       memoizedJoinConsultation,
-    ]
+    ],
   );
 
   useEffect(() => {
