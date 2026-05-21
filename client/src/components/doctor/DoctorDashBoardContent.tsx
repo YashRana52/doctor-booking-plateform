@@ -181,117 +181,174 @@ export default function DoctorDashboardContent() {
         <div className="container mx-auto px-4 lg:px-8 max-w-7xl relative z-10">
           {/* Hero Section */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative mb-14"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="relative mb-16"
           >
-            {/* Glass Card */}
-            <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/70 backdrop-blur-xl shadow-xl p-8 flex flex-col lg:flex-row items-center justify-between gap-10">
-              {/* Gradient Glow */}
-              <div className="absolute -top-20 -right-20 w-72 h-72 bg-blue-500/20 blur-3xl rounded-full" />
-              <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-indigo-500/20 blur-3xl rounded-full" />
+            <div className="relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-2xl border border-white/60 shadow-2xl p-10 lg:p-12">
+              {/* Background Accents */}
+              <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-32 -left-20 w-80 h-80 bg-gradient-to-br from-cyan-500/10 to-sky-500/10 rounded-full blur-3xl" />
 
-              {/* LEFT */}
-              <div className="flex items-center gap-6 z-10">
-                {/* Avatar */}
-                <div className="relative">
-                  <Avatar className="w-28 h-28 ring-4 ring-blue-100 shadow-xl">
-                    <AvatarImage src={dashboardData?.user?.profileImage} />
-                    <AvatarFallback className="text-4xl font-bold bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
-                      {dashboardData?.user?.name?.[0]}
-                    </AvatarFallback>
-                  </Avatar>
+              <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10 relative z-10">
+                {/* LEFT SECTION */}
+                <div className="flex items-start gap-8">
+                  {/* Avatar */}
+                  <div className="relative flex-shrink-0">
+                    <div className="w-32 h-32 rounded-3xl overflow-hidden ring-8 ring-white shadow-2xl">
+                      <Avatar className="w-full h-full">
+                        <AvatarImage
+                          src={dashboardData?.user?.profileImage}
+                          className="object-cover"
+                        />
 
-                  {/* Online Pulse */}
-                  <span className="absolute bottom-2 right-2 flex h-5 w-5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-5 w-5 bg-green-500 border-2 border-white"></span>
-                  </span>
-                </div>
-
-                {/* Info */}
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-semibold text-gray-900">
-                    Welcome back,
-                  </h1>
-
-                  <h2 className="text-4xl md:text-5xl font-bold mt-1 bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
-                    Dr. {dashboardData?.user?.name?.split(" ").pop()}
-                  </h2>
-
-                  <p className="text-lg text-gray-500 mt-2 font-medium">
-                    {dashboardData?.user?.specialization}
-                  </p>
-
-                  {/* Meta Info */}
-                  <div className="flex flex-wrap items-center gap-5 mt-4 text-gray-600">
-                    <div className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-full">
-                      <MapPin className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm font-medium">
-                        {dashboardData?.user?.hospitalInfo?.name},{" "}
-                        {dashboardData?.user?.hospitalInfo?.city}
-                      </span>
+                        <AvatarFallback className="text-6xl font-bold bg-gradient-to-br from-blue-600 via-indigo-600 to-cyan-500 text-white">
+                          {dashboardData?.user?.name?.[0]}
+                        </AvatarFallback>
+                      </Avatar>
                     </div>
 
-                    <div className="flex items-center gap-2 bg-yellow-50 px-3 py-1.5 rounded-full">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold text-gray-800">
-                        {dashboardData?.stats?.averageRating || "4.9"}
+                    {/* Online */}
+                    <div className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-white rounded-full pl-1 pr-3 py-1 shadow-lg">
+                      <div className="w-3.5 h-3.5 bg-emerald-500 rounded-full ring-2 ring-white animate-pulse" />
+                      <span className="text-xs font-semibold text-emerald-600">
+                        Online
                       </span>
-                      <span className="text-xs text-gray-500">Rating</span>
+                    </div>
+                  </div>
+
+                  {/* Text */}
+                  <div className="pt-2">
+                    <p className="text-lg text-slate-500 font-medium">
+                      Good morning, Doctor
+                    </p>
+
+                    <h1 className="text-5xl lg:text-6xl font-bold text-slate-900 tracking-tighter mt-1">
+                      Dr. {dashboardData?.user?.name?.split(" ").pop()}
+                    </h1>
+
+                    <p className="text-xl text-slate-600 mt-2 font-medium">
+                      {dashboardData?.user?.specialization}
+                    </p>
+
+                    {/* Info */}
+                    <div className="flex items-center gap-6 mt-6 flex-wrap">
+                      {/* Hospital */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center">
+                          <MapPin className="w-5 h-5 text-blue-600" />
+                        </div>
+
+                        <div>
+                          <p className="text-sm text-slate-500">
+                            Current Hospital
+                          </p>
+
+                          <p className="font-semibold text-slate-800">
+                            {dashboardData?.user?.hospitalInfo?.name}
+                          </p>
+
+                          <p className="text-xs text-slate-500">
+                            {dashboardData?.user?.hospitalInfo?.city}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="h-12 w-px bg-slate-200 hidden sm:block" />
+
+                      {/* Rating */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center">
+                          <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+                        </div>
+
+                        <div>
+                          <p className="text-3xl font-bold text-slate-800 leading-none">
+                            {dashboardData?.stats?.averageRating || "4.9"}
+                          </p>
+
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            Patient Rating
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                {/* RIGHT SECTION */}
+                <div className="w-full xl:max-w-[430px] flex flex-col gap-5">
+                  {/* Main Button */}
+                  <Link href="/doctor/profile">
+                    <Button
+                      size="lg"
+                      className="group relative h-16 w-full text-lg font-semibold rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-3">
+                        <Plus className="w-6 h-6" />
+                        Update Availability
+                      </span>
+
+                      <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                    </Button>
+                  </Link>
+
+                  {/* PREMIUM STATS GRID */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {stats.map((stat, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.08 }}
+                        whileHover={{ y: -4 }}
+                        className="group"
+                      >
+                        <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white/70 backdrop-blur-xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300">
+                          {/* Hover Glow */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] via-transparent to-cyan-500/[0.06] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                          <div className="relative z-10 flex items-center justify-between">
+                            {/* LEFT */}
+                            <div>
+                              <p className="text-xs font-medium text-slate-500">
+                                {stat.title}
+                              </p>
+
+                              <h3 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+                                {stat.value}
+                              </h3>
+                            </div>
+
+                            {/* ICON */}
+                            <div
+                              className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.bg} shadow-md group-hover:scale-110 transition-transform duration-300`}
+                            >
+                              <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                            </div>
+                          </div>
+
+                          {/* Progress */}
+                          <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-slate-100">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: "75%" }}
+                              transition={{
+                                duration: 1.2,
+                                delay: index * 0.1,
+                              }}
+                              className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400"
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
               </div>
-
-              {/* RIGHT CTA */}
-              <Link href="/doctor/profile" className="z-10">
-                <Button className="group relative overflow-hidden px-8 h-14 rounded-2xl text-lg font-semibold shadow-lg bg-gradient-to-r from-blue-600 to-indigo-700 hover:shadow-xl transition-all">
-                  <span className="relative z-10 flex items-center gap-2">
-                    <Plus className="w-5 h-5" />
-                    Update Availability
-                  </span>
-
-                  {/* Hover Glow */}
-                  <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition"></span>
-                </Button>
-              </Link>
             </div>
           </motion.div>
-
-          {/* Stats Grid - Glassmorphic Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.07 }}
-              >
-                <Card className="group border border-gray-200 bg-white hover:shadow-md transition-all duration-300 rounded-xl">
-                  <CardContent className="flex items-center justify-between p-4">
-                    {/* Left Content */}
-                    <div className="space-y-1">
-                      <p className="text-xs font-medium text-gray-500">
-                        {stat.title}
-                      </p>
-
-                      <p className="text-2xl font-bold text-gray-900">
-                        {stat.value}
-                      </p>
-                    </div>
-
-                    {/* Icon */}
-                    <div
-                      className={`p-2.5 rounded-lg ${stat.bg} group-hover:scale-105 transition`}
-                    >
-                      <stat.icon className={`w-5 h-5 ${stat.color}`} />
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
 
           {/* Appointments Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -443,23 +500,23 @@ export default function DoctorDashboardContent() {
                           Upcoming Appointments
                         </CardTitle>
                         <p className="text-sm text-gray-500">
-                          {dashboardData.upcommingAppointments?.length || 0}{" "}
+                          {dashboardData.upcomingAppointments?.length || 0}{" "}
                           scheduled
                         </p>
                       </div>
                     </div>
 
                     <Badge variant="outline">
-                      {dashboardData.upcommingAppointments?.length || 0}
+                      {dashboardData.upcomingAppointments?.length || 0}
                     </Badge>
                   </div>
                 </CardHeader>
 
                 {/* Content */}
                 <CardContent className="p-5 max-h-[420px] overflow-y-auto">
-                  {dashboardData.upcommingAppointments?.length > 0 ? (
+                  {dashboardData.upcomingAppointments?.length > 0 ? (
                     <div className="space-y-3">
-                      {dashboardData.upcommingAppointments.map((apt: any) => (
+                      {dashboardData.upcomingAppointments.map((apt: any) => (
                         <div
                           key={apt._id}
                           className="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-md transition"

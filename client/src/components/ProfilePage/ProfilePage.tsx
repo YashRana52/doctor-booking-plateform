@@ -31,6 +31,9 @@ import {
   User,
   Users,
   X,
+  ShieldCheck,
+  CalendarDays,
+  Activity,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
@@ -1248,6 +1251,126 @@ function ProfilePage({ userType }: ProfileProps) {
     return <div>Loading...</div>;
   }
 
+  // user hero
+
+  const isDoctor = userType === "doctor";
+
+  const profileUI = {
+    badgeText: isDoctor ? "Doctor Profile" : "Patient Health Profile",
+    activeText: isDoctor ? "Available Doctor" : "Active Patient",
+    verifiedText: isDoctor ? "Verified Doctor" : "Verified Patient",
+    recordText: isDoctor
+      ? "Professional Profile Active"
+      : "Health Records Active",
+    namePrefix: isDoctor ? "Dr. " : "",
+    gradient: isDoctor
+      ? "from-emerald-500 via-teal-500 to-cyan-600"
+      : "from-sky-500 via-blue-500 to-indigo-600",
+    fallbackGradient: isDoctor
+      ? "from-emerald-600 to-teal-600"
+      : "from-blue-600 to-indigo-600",
+  };
+
+  //ProfileIllustration
+
+  const ProfileIllustration = ({ isDoctor }: { isDoctor: boolean }) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="hidden lg:flex flex-shrink-0 justify-center items-center"
+      >
+        <div className="relative h-[340px] w-[340px]">
+          {/* Soft Ambient Glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-cyan-400/20 to-sky-400/10 rounded-[4rem] blur-3xl" />
+
+          {/* Floating Status Card */}
+          <motion.div
+            animate={{ y: [-8, 8, -8] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-4 right-6 z-30 rounded-3xl bg-white/80 backdrop-blur-2xl border border-white/60 shadow-xl px-5 py-3.5"
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-3 h-3 rounded-full ${isDoctor ? "bg-emerald-500 animate-pulse" : "bg-blue-500"}`}
+              />
+              <div>
+                <p className="text-xs font-semibold tracking-widest text-slate-500">
+                  {isDoctor ? "VERIFIED DOCTOR" : "ACTIVE MEMBER"}
+                </p>
+                <p className="text-lg font-bold text-slate-800 -mt-0.5">
+                  {user?.name}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Main Card */}
+          <motion.div
+            animate={{
+              y: [-12, 12, -12],
+              rotate: [-2, 2, -2],
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="relative z-20 h-full w-full rounded-[3rem] overflow-hidden border border-white/50 bg-gradient-to-br from-white/90 to-sky-50/90 shadow-2xl backdrop-blur-3xl"
+          >
+            {/* Subtle pattern background */}
+            <div className="absolute inset-0 bg-[radial-gradient(#e0f2fe_0.8px,transparent_1px)] [background-size:20px_20px] opacity-40" />
+
+            {/* Character Area */}
+            <div className="relative h-full flex items-center justify-center pt-8">
+              <div className="relative">
+                {/* Avatar Circle with Ring */}
+                <div className="relative">
+                  <div className="w-52 h-52 rounded-full bg-gradient-to-br from-blue-100 to-cyan-100 flex items-center justify-center shadow-inner">
+                    <div className="w-[190px] h-[190px] rounded-full overflow-hidden border-8 border-white shadow-xl">
+                      {/* Yahan real image bhi daal sakte ho ya better SVG */}
+                      <img
+                        src={
+                          isDoctor
+                            ? "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400"
+                            : "https://images.unsplash.com/photo-1606166187734-a4cb74079037?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjZ8fHBhdGllbnR8ZW58MHx8MHx8fDA%3D"
+                        }
+                        alt="profile"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Verification Badge */}
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2.5, repeat: Infinity }}
+                    className="absolute -bottom-2 right-6 bg-emerald-500 text-white text-xs font-bold px-4 py-1.5 rounded-2xl shadow-lg flex items-center gap-2"
+                  >
+                    <span>✓</span> VERIFIED
+                  </motion.div>
+                </div>
+
+                {/* Medical Icon (Doctor ke liye) */}
+                {isDoctor && (
+                  <div className="absolute -top-6 -right-6 bg-white rounded-2xl p-4 shadow-xl border border-sky-100">
+                    <svg
+                      width="42"
+                      height="42"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#0ea5e9"
+                      strokeWidth="2"
+                    >
+                      <path d="M19 11H5M19 11C20.1 11 21 11.9 21 13V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V13C3 11.9 3.9 11 5 11M19 11V9C19 7.9 18.1 7 17 7H7C5.9 7 5 7.9 5 9V11" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+    );
+  };
+
   return (
     <>
       <Header showDashBoardNav={true} />
@@ -1272,206 +1395,110 @@ function ProfilePage({ userType }: ProfileProps) {
 
               <div className="p-8 lg:p-12 flex flex-col lg:flex-row gap-12 items-center lg:items-center">
                 {/* Left: Profile Info */}
-                <div className="flex items-start gap-10 flex-1">
+                <div className="flex flex-col lg:flex-row lg:items-center gap-8 flex-1">
+                  {/* Dynamic Avatar */}
                   <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
+                    initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="relative flex-shrink-0"
+                    transition={{ duration: 0.5, delay: 0.15 }}
+                    className="relative flex-shrink-0 w-fit"
                   >
-                    <Avatar className="w-36 h-36 ring-8 ring-white shadow-xl transition-all duration-300 hover:scale-105">
-                      <AvatarImage src={user?.profileImage} alt={user?.name} />
-                      <AvatarFallback className="text-7xl font-bold bg-gradient-to-br from-indigo-600 to-blue-600 text-white">
-                        {user?.name?.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div
+                      className={`relative p-1.5 rounded-[2rem] bg-gradient-to-br ${profileUI.gradient} shadow-xl`}
+                    >
+                      <Avatar className="w-32 h-32 md:w-36 md:h-36 rounded-[1.7rem] border-4 border-white bg-white shadow-md">
+                        <AvatarImage
+                          src={user?.profileImage}
+                          alt={user?.name}
+                          className="object-cover"
+                        />
 
-                    {/* Online Indicator with pulse animation */}
+                        <AvatarFallback
+                          className={`rounded-[1.7rem] text-6xl font-bold bg-gradient-to-br ${profileUI.fallbackGradient} text-white`}
+                        >
+                          {user?.name?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+
+                    {/* Active Badge */}
                     <motion.div
-                      animate={{ scale: [1, 1.15, 1] }}
+                      animate={{ y: [0, -3, 0] }}
                       transition={{
                         duration: 2,
                         repeat: Infinity,
                         ease: "easeInOut",
                       }}
-                      className="absolute bottom-2 right-2 bg-emerald-500 w-10 h-10 rounded-2xl border-[6px] border-white shadow-md flex items-center justify-center"
+                      className="absolute -bottom-3 left-1/2 -translate-x-1/2"
                     >
-                      <div className="w-4 h-4 bg-white rounded-full animate-ping absolute"></div>
-                      <div className="w-4 h-4 bg-white rounded-full"></div>
+                      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-blue-100 shadow-lg">
+                        <span className="relative flex h-2.5 w-2.5">
+                          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                        </span>
+                        <span className="text-xs font-semibold text-gray-700">
+                          {profileUI.activeText}
+                        </span>
+                      </div>
                     </motion.div>
                   </motion.div>
 
-                  <div className="pt-2 space-y-4">
+                  {/* Dynamic User Info */}
+                  <div className="pt-2 space-y-5">
                     <motion.div
-                      initial={{ opacity: 0, x: -20 }}
+                      initial={{ opacity: 0, x: -18 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: 0.4 }}
+                      transition={{ duration: 0.5, delay: 0.3 }}
+                      className="space-y-2"
                     >
-                      <h1 className="text-4xl lg:text-5xl font-semibold tracking-tighter text-gray-900">
+                      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-100">
+                        <HeartPulse className="w-4 h-4" />
+                        {profileUI.badgeText}
+                      </div>
+
+                      <h1 className="text-4xl lg:text-5xl font-bold tracking-tight text-gray-950">
+                        {profileUI.namePrefix}
                         {user?.name}
                       </h1>
-                      <p className="text-xl text-gray-600 mt-2 font-medium">
+
+                      <p className="text-base md:text-lg text-gray-500 font-medium">
                         {user?.email}
                       </p>
                     </motion.div>
 
+                    {/* Dynamic Badges */}
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.6 }}
+                      transition={{ duration: 0.5, delay: 0.45 }}
                       className="flex flex-wrap gap-3"
                     >
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-50 text-emerald-700 rounded-2xl text-sm font-semibold shadow-sm cursor-pointer"
-                      >
-                        <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-emerald-200"></div>
-                        Verified Doctor
-                      </motion.div>
+                      <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        <span className="text-sm font-semibold text-gray-700">
+                          {profileUI.verifiedText}
+                        </span>
+                      </div>
 
-                      <div className="inline-flex items-center px-5 py-2 bg-gray-100 text-gray-600 rounded-2xl text-sm font-medium">
-                        Member since {new Date().getFullYear()}
+                      <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                        <CalendarDays className="w-4 h-4 text-blue-600" />
+                        <span className="text-sm font-semibold text-gray-700">
+                          Member since {new Date().getFullYear()}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                        <Activity className="w-4 h-4 text-purple-600" />
+                        <span className="text-sm font-semibold text-gray-700">
+                          {profileUI.recordText}
+                        </span>
                       </div>
                     </motion.div>
                   </div>
                 </div>
 
                 {/* Right: Modern Doctor Illustration with gentle floating animation */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.85, rotate: -8 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  transition={{ duration: 0.8, delay: 0.3 }}
-                  className="hidden lg:block flex-shrink-0"
-                >
-                  <div className="relative w-[260px] h-[260px]">
-                    {/* Soft Glow Background with slow pulse */}
-                    <motion.div
-                      animate={{ opacity: [0.6, 0.85, 0.6] }}
-                      transition={{
-                        duration: 6,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                      className="absolute inset-0 bg-gradient-to-br from-blue-100/80 via-sky-100/70 to-teal-100/60 rounded-[4rem] blur-3xl"
-                    />
-
-                    <motion.svg
-                      animate={{
-                        y: [-8, 8, -8],
-                        rotate: [-2, 2, -2],
-                      }}
-                      transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                      width="260"
-                      height="260"
-                      viewBox="0 0 260 260"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="drop-shadow-2xl"
-                    >
-                      {/* Background Soft Circles */}
-                      <circle cx="130" cy="130" r="110" fill="#F0F9FF" />
-                      <circle cx="130" cy="130" r="85" fill="#E0F2FE" />
-
-                      {/* Doctor's Body / Coat */}
-                      <rect
-                        x="92"
-                        y="135"
-                        width="76"
-                        height="88"
-                        rx="20"
-                        fill="#1E3A8A"
-                      />
-                      <ellipse
-                        cx="130"
-                        cy="195"
-                        rx="38"
-                        ry="28"
-                        fill="#1E3A8A"
-                      />
-
-                      {/* Head */}
-                      <circle cx="130" cy="92" r="38" fill="#FED7AA" />
-
-                      {/* Hair */}
-                      <path d="M95 65 Q130 38 165 65" fill="#1E2937" />
-
-                      {/* Eyes */}
-                      <ellipse cx="115" cy="88" rx="6" ry="8" fill="#1E3A8A" />
-                      <ellipse cx="145" cy="88" rx="6" ry="8" fill="#1E3A8A" />
-
-                      {/* Smile */}
-                      <path
-                        d="M115 105 Q130 115 145 105"
-                        stroke="#1E3A8A"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                        fill="none"
-                      />
-
-                      {/* Stethoscope Tube */}
-                      <path
-                        d="M130 125 L130 148"
-                        stroke="#0369A1"
-                        strokeWidth="10"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M130 148 Q100 175 88 195"
-                        stroke="#0369A1"
-                        strokeWidth="9"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M130 148 Q160 175 172 195"
-                        stroke="#0369A1"
-                        strokeWidth="9"
-                        strokeLinecap="round"
-                      />
-
-                      {/* Ear Tips */}
-                      <circle cx="88" cy="197" r="13" fill="#EF4444" />
-                      <circle cx="172" cy="197" r="13" fill="#EF4444" />
-
-                      {/* Diaphragm */}
-                      <circle cx="130" cy="122" r="18" fill="#1E2937" />
-                      <circle cx="130" cy="122" r="11" fill="#94A3B8" />
-
-                      {/* Medical Cross Badge */}
-                      <circle cx="195" cy="68" r="26" fill="#14B8A6" />
-                      <text
-                        x="195"
-                        y="80"
-                        textAnchor="middle"
-                        fill="white"
-                        fontSize="34"
-                        fontWeight="700"
-                      >
-                        ✚
-                      </text>
-
-                      {/* Decorative Elements */}
-                      <circle
-                        cx="65"
-                        cy="75"
-                        r="8"
-                        fill="#22D3EE"
-                        opacity="0.6"
-                      />
-                      <circle
-                        cx="185"
-                        cy="165"
-                        r="10"
-                        fill="#67E8F9"
-                        opacity="0.5"
-                      />
-                    </motion.svg>
-                  </div>
-                </motion.div>
+                <ProfileIllustration isDoctor={isDoctor} />
               </div>
             </motion.div>
           </div>

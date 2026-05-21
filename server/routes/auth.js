@@ -41,12 +41,12 @@ router.post(
       const token = signToken(doc._id, "doctor");
       res.created(
         { token, user: { id: doc._id, type: "doctor" } },
-        "Doctor register successfully"
+        "Doctor register successfully",
       );
     } catch (error) {
       res.serverError("Registration failed", [error.message]);
     }
-  }
+  },
 );
 
 //doctor login
@@ -59,7 +59,7 @@ router.post(
       const doc = await Doctor.findOne({ email: req.body.email });
       if (!doc || !doc.password) {
         return res.unauthorized(
-          "Doctor not exist with this email and password "
+          "Doctor not exist with this email and password ",
         );
       }
 
@@ -68,12 +68,12 @@ router.post(
       const token = signToken(doc._id, "doctor");
       res.created(
         { token, user: { id: doc._id, type: "doctor" } },
-        "Doctor Login successfully"
+        "Doctor Login successfully",
       );
     } catch (error) {
       res.serverError("Login failed", [error.message]);
     }
-  }
+  },
 );
 //patient signup
 router.post(
@@ -101,12 +101,12 @@ router.post(
       const token = signToken(pat._id, "patient");
       res.created(
         { token, user: { id: pat._id, type: "patient" } },
-        "Patient register successfully"
+        "Patient register successfully",
       );
     } catch (error) {
       res.serverError("Registration failed", [error.message]);
     }
-  }
+  },
 );
 //doctor login
 
@@ -119,7 +119,7 @@ router.post(
       const pat = await Patient.findOne({ email: req.body.email });
       if (!pat || !pat.password) {
         return res.unauthorized(
-          "patient not exist with this email and password "
+          "patient not exist with this email and password ",
         );
       }
 
@@ -128,12 +128,12 @@ router.post(
       const token = signToken(pat._id, "patient");
       res.created(
         { token, user: { id: pat._id, type: "patient" } },
-        "patient Login successfully"
+        "patient Login successfully",
       );
     } catch (error) {
       res.serverError("Login failed", [error.message]);
     }
-  }
+  },
 );
 
 //google login
@@ -167,18 +167,18 @@ router.get(
           name: user.name,
           email: user.email,
           profileImage: user.profileImage,
-        })
+        }),
       )}`;
 
       res.redirect(redirectUrl);
     } catch (e) {
       res.redirect(
         `${process.env.FRONTEND_URL}/auth/error?message=${encodeURIComponent(
-          e.message
-        )}`
+          e.message,
+        )}`,
       );
     }
-  }
+  },
 );
 
 //auth failure

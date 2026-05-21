@@ -41,7 +41,7 @@ router.get(
         limit = 20,
       } = req.query;
 
-      const filter = { isVerified: true };
+      const filter = { isVerified: true, isActive: true };
 
       // Filtering
       if (specialization)
@@ -151,11 +151,17 @@ router.get(
       const doctorId = req.user._id;
 
       const now = new Date();
+
       const startOfDay = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate(),
+        0,
+        0,
+        0,
+        0,
       );
+
       const endOfDay = new Date(
         now.getFullYear(),
         now.getMonth(),
@@ -166,59 +172,118 @@ router.get(
         999,
       );
 
-      // Doctor details
       const doctor = await Doctor.findById(doctorId)
-        .select("-password -googledId")
+        .select("-password -googleId")
         .lean();
-      if (!doctor) return res.notFound("Doctor not found");
 
-      // Today's appointments
+      if (!doctor) {
+        return res.notFound("Doctor not found");
+      }
+
+      // STEP 1: Scheduled appointments fetch karo
+      const scheduledAppointments = await Appointment.find({
+        doctorId,
+        status: "Scheduled",
+      })
+        .select("_id slotEndIso")
+        .lean();
+
+      // STEP 2: Node.js me date compare karke past appointments nikaalo
+      const missedAppointmentIds = scheduledAppointments
+        .filter((apt) => {
+          const endTime = new Date(apt.slotEndIso);
+
+          return !isNaN(endTime.getTime()) && endTime <= now;
+        })
+        .map((apt) => apt._id);
+
+      // STEP 3: Jo past scheduled appointments hain unko Missed mark karo
+      if (missedAppointmentIds.length > 0) {
+        const missedUpdateResult = await Appointment.updateMany(
+          {
+            _id: { $in: missedAppointmentIds },
+          },
+          {
+            $set: {
+              status: "Missed",
+            },
+          },
+        );
+      }
+
+      // STEP 4: Today's appointments fetch karo
       const todayAppointments = await Appointment.find({
         doctorId,
-        slotStartIso: { $gte: startOfDay, $lte: endOfDay },
-        status: { $ne: "Cancelled" },
+        date: {
+          $gte: startOfDay,
+          $lte: endOfDay,
+        },
+        status: { $in: ["Scheduled", "In Progress", "Completed"] },
       })
         .populate("patientId", "name profileImage age email phone")
         .populate("doctorId", "name fees specialization profileImage")
-        .sort({ slotStartIso: 1 });
+        .sort({ slotStartIso: 1 })
+        .lean();
 
-      // Upcoming
-      const upcommingAppointments = await Appointment.find({
+      // STEP 5: Upcoming appointments fetch karo
+      // Direct MongoDB string compare avoid kiya hai
+      const possibleUpcomingAppointments = await Appointment.find({
         doctorId,
-        slotStartIso: { $gt: endOfDay },
-        status: { $ne: "Cancelled" },
+        status: { $in: ["Scheduled", "In Progress"] },
       })
         .populate("patientId", "name profileImage age email phone")
-        .limit(5)
-        .sort({ slotStartIso: 1 });
+        .populate("doctorId", "name fees specialization profileImage")
+        .lean();
 
-      // Unique patients
+      const upcomingAppointments = possibleUpcomingAppointments
+        .filter((apt) => {
+          const startTime = new Date(apt.slotStartIso);
+
+          return !isNaN(startTime.getTime()) && startTime > now;
+        })
+        .sort((a, b) => {
+          return (
+            new Date(a.slotStartIso).getTime() -
+            new Date(b.slotStartIso).getTime()
+          );
+        })
+        .slice(0, 5);
+
       const uniquePatientIds = await Appointment.distinct("patientId", {
         doctorId,
       });
+
       const totalPatients = uniquePatientIds.length;
 
-      // Completed appointments count
-      const completedAppointment = await Appointment.countDocuments({
+      const completedAppointments = await Appointment.countDocuments({
         doctorId,
         status: "Completed",
       });
 
-      // Total revenue (only completed appointments)
       const paidAppointments = await Appointment.find({
         doctorId,
         status: "Completed",
+        paymentStatus: "Paid",
         payoutStatus: "Paid",
-      }).select("consultationFees totalAmount");
+      })
+        .select("consultationFees")
+        .lean();
 
       const totalRevenue = paidAppointments.reduce((sum, apt) => {
-        return (
-          sum + (apt.totalAmount || apt.consultationFees || doctor.fees || 0)
-        );
+        return sum + Number(apt.consultationFees || 0);
       }, 0);
 
-      // Final response
-      res.ok(
+      const totalAppointments = await Appointment.countDocuments({
+        doctorId,
+        status: { $ne: "Cancelled" },
+      });
+
+      const completionRate =
+        totalAppointments > 0
+          ? Math.round((completedAppointments / totalAppointments) * 100)
+          : 0;
+
+      return res.ok(
         {
           user: {
             name: doctor.name,
@@ -227,19 +292,20 @@ router.get(
             specialization: doctor.specialization,
             hospitalInfo: doctor.hospitalInfo,
           },
+
           stats: {
             totalPatients,
             todayAppointments: todayAppointments.length,
             totalRevenue,
-            completedAppointments: completedAppointment,
+            completedAppointments,
           },
+
           todayAppointments,
-          upcommingAppointments,
+          upcomingAppointments,
+
           performance: {
             patientSatisfaction: 4.8,
-            completionRate: Math.round(
-              (completedAppointment / (completedAppointment + 10)) * 100,
-            ),
+            completionRate,
             responseTime: "<5min",
           },
         },
@@ -247,7 +313,8 @@ router.get(
       );
     } catch (error) {
       console.error("Dashboard error:", error);
-      res.serverError("Failed to fetch dashboard data", error.message);
+
+      return res.serverError("Failed to fetch dashboard data", [error.message]);
     }
   },
 );

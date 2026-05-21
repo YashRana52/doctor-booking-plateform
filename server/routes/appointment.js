@@ -39,7 +39,7 @@ router.get(
       console.error("Doctor appointment fetch error:", error);
       res.serverError("Failed to fetch appointments", error.message);
     }
-  }
+  },
 );
 
 // ---------------- Patient Appointments ----------------
@@ -68,7 +68,7 @@ router.get(
       const appointments = await Appointment.find(filter)
         .populate(
           "doctorId",
-          "name fees phone specialization hospitalInfo profileImage"
+          "name fees phone specialization hospitalInfo profileImage",
         )
         .populate("patientId", "name email profileImage")
         .sort({ slotStartIso: 1 });
@@ -78,7 +78,7 @@ router.get(
       console.error("Patient appointment fetch error:", error);
       res.serverError("Failed to fetch appointments", error.message);
     }
-  }
+  },
 );
 
 // ---------------- Get Booked Slots ----------------
@@ -132,8 +132,6 @@ router.post(
   validate,
   async (req, res) => {
     try {
-      console.log("Incoming Body => ", req.body); // 🔥 LOG ADDED HERE
-
       const {
         doctorId,
         slotStartIso,
@@ -188,17 +186,15 @@ router.post(
 
       await appointment.populate(
         "doctorId",
-        "name fees phone specialization hospitalInfo profileImage"
+        "name fees phone specialization hospitalInfo profileImage",
       );
       await appointment.populate("patientId", "name email");
 
       res.created(appointment, "Appointment booked successfully");
     } catch (error) {
-      console.log("BOOK ERROR => ", error.message); // 🔥 LOG ADDED HERE
-      console.error("Appointment booking error:", error);
       res.serverError("Failed to book appointment", error.message);
     }
-  }
+  },
 );
 
 //Get single appointment by id
@@ -209,7 +205,7 @@ router.get("/:id", authenticate, async (req, res) => {
       .populate("patientId", "name email phone dob age profileImage")
       .populate(
         "doctorId",
-        "name fees phone specialization profileImage hospitalInfo"
+        "name fees phone specialization profileImage hospitalInfo",
       );
 
     if (!appointment) {
@@ -252,7 +248,7 @@ router.get("/join/:id", authenticate, async (req, res) => {
         roomId: appointment.zegoRoomId,
         appointment,
       },
-      "Consultation join successfully"
+      "Consultation join successfully",
     );
   } catch (error) {
     res.serverError("Failed to join Consultation", error.message);
@@ -272,7 +268,7 @@ router.put("/end/:id", authenticate, async (req, res) => {
         notes,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     ).populate("patientId doctorId");
 
     if (!appointment) {
@@ -283,7 +279,7 @@ router.put("/end/:id", authenticate, async (req, res) => {
       {
         appointment,
       },
-      "Consultation end successfully"
+      "Consultation end successfully",
     );
   } catch (error) {
     res.serverError("Failed to end Consultation", error.message);
@@ -300,7 +296,7 @@ router.put(
     try {
       const { status } = req.body;
       const appointment = await Appointment.findById(req.params.id).populate(
-        "patientId doctorId"
+        "patientId doctorId",
       );
 
       if (!appointment) {
@@ -319,12 +315,12 @@ router.put(
         {
           appointment,
         },
-        "appointment status updated successfully"
+        "appointment status updated successfully",
       );
     } catch (error) {
       res.serverError("Failed to updated appointment status ", error.message);
     }
-  }
+  },
 );
 
 export default router;

@@ -25,7 +25,7 @@ const appointmentSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["Scheduled", "Completed", "Cancelled", "In Progress"],
+      enum: ["Scheduled", "Completed", "Cancelled", "In Progress", "Missed"],
       default: "Scheduled",
     },
 
@@ -69,13 +69,13 @@ const appointmentSchema = new mongoose.Schema(
     paymentDate: { type: Date },
   },
 
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Prevent duplicate slot bookings
 appointmentSchema.index(
   { doctorId: 1, date: 1, slotStartIso: 1 },
-  { unique: true }
+  { unique: true },
 );
 
 export default mongoose.model("Appointment", appointmentSchema);

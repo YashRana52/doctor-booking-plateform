@@ -74,8 +74,6 @@ router.put(
 router.post("/symptom-suggestions", async (req, res) => {
   try {
     const { message } = req.body;
-    console.log("🔥 Symptom Suggestion API Hit");
-    console.log("📩 Symptom Received:", message);
 
     const prompt = `
 You are a medical assistant.
@@ -116,7 +114,7 @@ Symptom: "${message}"
       .map((s) => s.trim())
       .filter(Boolean);
 
-    // ✅ Dynamic fallback based on message
+    //  Dynamic fallback based on message
     if (!suggestions.length) {
       const msg = message.toLowerCase();
 

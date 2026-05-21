@@ -15,6 +15,7 @@ import {
   IndianRupee,
   UserCog,
   TrendingUp,
+  ArrowUpRight,
 } from "lucide-react";
 
 import {
@@ -208,35 +209,60 @@ function Dashboard() {
       {/* Charts Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Monthly Revenue - Area Chart */}
-        <Card className="overflow-hidden">
-          <CardHeader>
-            <div className="flex items-center justify-between">
+        <Card className="overflow-hidden rounded-3xl border-0 bg-white shadow-sm shadow-slate-200/70">
+          <CardHeader className="border-b bg-gradient-to-r from-indigo-50 via-white to-cyan-50">
+            <div className="flex items-center justify-between gap-4">
               <div>
-                <CardTitle>Monthly Revenue</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-xl font-bold text-slate-900">
+                  Monthly Revenue
+                </CardTitle>
+
+                <CardDescription className="mt-1 text-slate-500">
                   Revenue trend for the current year
                 </CardDescription>
               </div>
 
-              <div className="text-emerald-600 text-sm font-medium flex items-center gap-1">
+              <div className="rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-600">
                 ↑ 12.4%
-                <span className="text-xs text-muted-foreground">
-                  from last year
+                <span className="ml-1 text-xs font-medium text-slate-400">
+                  YoY
                 </span>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className="pt-2">
-            <div className="h-[340px]">
+          <CardContent className="p-4">
+            <div className="mb-5 flex items-end justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-500">
+                  Total Revenue
+                </p>
+
+                <h3 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">
+                  ₹{stats?.totalRevenue?.toLocaleString("en-IN") || 0}
+                </h3>
+              </div>
+
+              <div className="rounded-2xl bg-indigo-50 px-4 py-2 text-right">
+                <p className="text-xs font-medium text-slate-500">Reports</p>
+                <p className="text-lg font-bold text-indigo-600">
+                  {revenueData.length}
+                </p>
+              </div>
+            </div>
+
+            <div className="h-[250px]">
               {revenueData.length === 0 ? (
                 <EmptyChart title="No revenue data yet" />
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={revenueData}>
+                  <AreaChart
+                    data={revenueData}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                  >
                     <defs>
                       <linearGradient
-                        id="colorRevenue"
+                        id="modernRevenueGradient"
                         x1="0"
                         y1="0"
                         x2="0"
@@ -244,26 +270,44 @@ function Dashboard() {
                       >
                         <stop
                           offset="0%"
-                          stopColor="#6366f1"
-                          stopOpacity={0.4}
+                          stopColor="#4f46e5"
+                          stopOpacity={0.38}
+                        />
+                        <stop
+                          offset="55%"
+                          stopColor="#06b6d4"
+                          stopOpacity={0.14}
                         />
                         <stop
                           offset="100%"
-                          stopColor="#6366f1"
+                          stopColor="#06b6d4"
                           stopOpacity={0}
                         />
                       </linearGradient>
                     </defs>
 
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <CartesianGrid
+                      strokeDasharray="4 4"
+                      vertical={false}
+                      stroke="#e2e8f0"
+                    />
 
-                    <XAxis dataKey="month" tickLine={false} axisLine={false} />
+                    <XAxis
+                      dataKey="month"
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{ fill: "#64748b", fontSize: 12 }}
+                      dy={10}
+                    />
 
                     <YAxis
                       tickFormatter={formatCurrency}
                       tickLine={false}
                       axisLine={false}
+                      tick={{ fill: "#64748b", fontSize: 12 }}
+                      width={70}
                     />
+
                     <Tooltip
                       formatter={(value) => {
                         const amount = Number(value || 0);
@@ -273,16 +317,36 @@ function Dashboard() {
                           "Revenue",
                         ];
                       }}
+                      labelStyle={{
+                        color: "#0f172a",
+                        fontWeight: 700,
+                      }}
+                      contentStyle={{
+                        borderRadius: "18px",
+                        border: "1px solid #e2e8f0",
+                        boxShadow: "0 18px 40px rgba(15, 23, 42, 0.12)",
+                        padding: "12px 14px",
+                      }}
                     />
 
                     <Area
                       type="monotone"
                       dataKey="revenue"
-                      stroke="#6366f1"
-                      strokeWidth={3}
-                      fill="url(#colorRevenue)"
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 7 }}
+                      stroke="#4f46e5"
+                      strokeWidth={4}
+                      fill="url(#modernRevenueGradient)"
+                      dot={{
+                        r: 4,
+                        strokeWidth: 3,
+                        stroke: "#ffffff",
+                        fill: "#4f46e5",
+                      }}
+                      activeDot={{
+                        r: 7,
+                        strokeWidth: 4,
+                        stroke: "#ffffff",
+                        fill: "#06b6d4",
+                      }}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -292,12 +356,26 @@ function Dashboard() {
         </Card>
 
         {/* Appointment Status - Pie Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Appointment Status</CardTitle>
+        <Card className="overflow-hidden rounded-3xl border-0 bg-white shadow-sm shadow-slate-200/70">
+          <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-cyan-50/60">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xl font-bold text-slate-900">
+                  Appointment Status
+                </CardTitle>
+                <CardDescription className="mt-1">
+                  Current appointment distribution
+                </CardDescription>
+              </div>
+
+              <div className="rounded-full bg-cyan-100 px-3 py-1 text-xs font-semibold text-cyan-700">
+                Live
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
+
+          <CardContent className="p-4">
+            <div className="h-[250px]">
               {appointmentData.length === 0 ? (
                 <EmptyChart title="No appointments yet" />
               ) : (
@@ -307,125 +385,183 @@ function Dashboard() {
                       data={appointmentData}
                       cx="50%"
                       cy="50%"
-                      outerRadius={100}
+                      innerRadius={68}
+                      outerRadius={105}
+                      paddingAngle={5}
                       dataKey="value"
                       nameKey="name"
                       label={({ name, percent }) =>
-                        `${name}: ${(percent! * 100).toFixed(0)}%`
+                        `${name}: ${((percent || 0) * 100).toFixed(0)}%`
                       }
-                      labelLine
+                      labelLine={false}
                     >
-                      {appointmentData.map((entry, index) => (
+                      {appointmentData.map((_, index) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={COLORS[index % COLORS.length]}
+                          stroke="#ffffff"
+                          strokeWidth={4}
                         />
                       ))}
                     </Pie>
-                    <Tooltip />
+
+                    <Tooltip
+                      formatter={(value, name) => [`${value}`, name]}
+                      contentStyle={{
+                        borderRadius: "16px",
+                        border: "1px solid #e2e8f0",
+                        boxShadow: "0 12px 30px rgba(15, 23, 42, 0.12)",
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               )}
             </div>
+
+            {appointmentData.length > 0 && (
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                {appointmentData.map((item, index) => (
+                  <div
+                    key={item.name}
+                    className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="h-3 w-3 rounded-full"
+                        style={{
+                          backgroundColor: COLORS[index % COLORS.length],
+                        }}
+                      />
+
+                      <span className="text-sm font-medium capitalize text-slate-600">
+                        {item.name}
+                      </span>
+                    </div>
+
+                    <span className="text-sm font-bold text-slate-900">
+                      {item.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* User Growth - Bar Chart */}
-        <Card className="border-0 shadow-xl rounded-2xl bg-white dark:bg-gray-900">
-          {/* Header */}
-          <CardHeader className="pb-4 border-b border-gray-100 dark:border-gray-800">
-            <div className="flex items-center justify-between">
+        <Card className="overflow-hidden rounded-3xl border-0 bg-white shadow-sm shadow-slate-200/70">
+          <CardHeader className="border-b bg-gradient-to-r from-violet-50 via-white to-cyan-50 py-4">
+            <div className="flex items-center justify-between gap-4">
               <div>
-                <CardTitle className="text-lg font-semibold">
+                <CardTitle className="text-xl font-bold text-slate-900">
                   User Growth
                 </CardTitle>
 
-                <CardDescription>New patients per month</CardDescription>
+                <CardDescription className="mt-1 text-slate-500">
+                  New patients registered per month
+                </CardDescription>
               </div>
 
-              <div className="text-xs text-muted-foreground">This year</div>
+              <div className="rounded-full bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-700">
+                This Year
+              </div>
             </div>
           </CardHeader>
 
-          {/* Chart */}
-          <CardContent className="pt-6">
-            <div className="h-[320px]">
+          <CardContent className="p-4">
+            <div className="mb-3 flex items-end justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-500">
+                  Total Patients
+                </p>
+
+                <h3 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+                  {stats?.totalPatients || 0}
+                </h3>
+              </div>
+
+              <div className="rounded-2xl bg-cyan-50 px-4 py-2 text-right">
+                <p className="text-xs font-medium text-slate-500">Reports</p>
+                <p className="text-lg font-bold text-cyan-600">
+                  {userGrowthData.length}
+                </p>
+              </div>
+            </div>
+
+            <div className="h-[250px]">
               {userGrowthData.length === 0 ? (
                 <EmptyChart title="No user growth data yet" />
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={userGrowthData}
-                    barGap={10}
                     margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                   >
-                    {/* Gradient */}
                     <defs>
                       <linearGradient
-                        id="userGrowthGradient"
+                        id="modernUserGrowthGradient"
                         x1="0"
                         y1="0"
                         x2="0"
                         y2="1"
                       >
-                        <stop offset="0%" stopColor="#6366f1" stopOpacity={1} />
+                        <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1} />
                         <stop
                           offset="100%"
-                          stopColor="#818cf8"
-                          stopOpacity={0.7}
+                          stopColor="#06b6d4"
+                          stopOpacity={0.72}
                         />
                       </linearGradient>
                     </defs>
 
-                    {/* Grid */}
                     <CartesianGrid
-                      strokeDasharray="3 3"
+                      strokeDasharray="4 4"
                       vertical={false}
-                      strokeOpacity={0.15}
+                      stroke="#e2e8f0"
                     />
 
-                    {/* X Axis */}
                     <XAxis
                       dataKey="month"
                       tickLine={false}
                       axisLine={false}
-                      fontSize={12}
-                      tick={{ fill: "#6b7280" }}
+                      tick={{ fill: "#64748b", fontSize: 12 }}
+                      dy={8}
                     />
 
-                    {/* Y Axis */}
                     <YAxis
                       allowDecimals={false}
                       tickLine={false}
                       axisLine={false}
-                      fontSize={12}
-                      tick={{ fill: "#6b7280" }}
+                      tick={{ fill: "#64748b", fontSize: 12 }}
+                      width={38}
                     />
 
-                    {/* Tooltip */}
                     <Tooltip
-                      cursor={{ fill: "rgba(99,102,241,0.08)" }}
+                      cursor={{ fill: "rgba(139, 92, 246, 0.08)" }}
                       formatter={(value) => {
                         const patients = Number(value ?? 0);
                         return [`${patients}`, "Patients"];
                       }}
+                      labelStyle={{
+                        color: "#0f172a",
+                        fontWeight: 700,
+                      }}
                       contentStyle={{
-                        borderRadius: "12px",
-                        border: "1px solid #e5e7eb",
-                        fontSize: "13px",
-                        boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                        borderRadius: "16px",
+                        border: "1px solid #e2e8f0",
+                        boxShadow: "0 14px 34px rgba(15, 23, 42, 0.12)",
+                        padding: "10px 12px",
                       }}
                     />
 
-                    {/* Bars */}
                     <Bar
                       dataKey="patients"
-                      fill="url(#userGrowthGradient)"
-                      radius={[12, 12, 0, 0]}
-                      maxBarSize={42}
-                      animationDuration={1200}
+                      fill="url(#modernUserGrowthGradient)"
+                      radius={[14, 14, 0, 0]}
+                      maxBarSize={38}
+                      animationDuration={1000}
                       animationEasing="ease-out"
                     />
                   </BarChart>
@@ -436,30 +572,82 @@ function Dashboard() {
         </Card>
 
         {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Manage your platform efficiently</CardDescription>
+        <Card className="overflow-hidden rounded-3xl border-0 bg-white shadow-sm shadow-slate-200/70">
+          <CardHeader className="border-b bg-gradient-to-r from-slate-50 via-white to-cyan-50 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-xl font-bold text-slate-900">
+                  Quick Actions
+                </CardTitle>
+
+                <CardDescription className="mt-1 text-slate-500">
+                  Manage your platform efficiently
+                </CardDescription>
+              </div>
+
+              <div className="rounded-full bg-cyan-100 px-3 py-1 text-xs font-semibold text-cyan-700">
+                Admin
+              </div>
+            </div>
           </CardHeader>
 
-          <CardContent className="flex flex-wrap gap-3">
-            <Button
+          <CardContent className="space-y-4 p-4">
+            {/* Manage Users */}
+            <button
               onClick={() => router.push("/admin/users")}
-              variant="outline"
-              className="gap-2"
+              className="group flex w-full items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-cyan-50 hover:shadow-md"
             >
-              <UserCog className="h-4 w-4" />
-              Manage Users
-            </Button>
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-100 transition-all group-hover:bg-cyan-500">
+                  <UserCog className="h-5 w-5 text-cyan-600 transition-all group-hover:text-white" />
+                </div>
 
-            <Button
+                <div className="text-left">
+                  <p className="font-semibold text-slate-900">Manage Users</p>
+
+                  <p className="text-sm text-slate-500">
+                    Doctors & patients control
+                  </p>
+                </div>
+              </div>
+
+              <ArrowUpRight className="h-5 w-5 text-slate-400 transition-all group-hover:text-cyan-600" />
+            </button>
+
+            {/* Payments */}
+            <button
               onClick={() => router.push("/admin/payments")}
-              variant="outline"
-              className="gap-2"
+              className="group flex w-full items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-violet-50 hover:shadow-md"
             >
-              <IndianRupee className="h-4 w-4" />
-              Process Payments
-            </Button>
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 transition-all group-hover:bg-violet-500">
+                  <IndianRupee className="h-5 w-5 text-violet-600 transition-all group-hover:text-white" />
+                </div>
+
+                <div className="text-left">
+                  <p className="font-semibold text-slate-900">
+                    Process Payments
+                  </p>
+
+                  <p className="text-sm text-slate-500">
+                    Revenue & transaction reports
+                  </p>
+                </div>
+              </div>
+
+              <ArrowUpRight className="h-5 w-5 text-slate-400 transition-all group-hover:text-violet-600" />
+            </button>
+
+            {/* Extra Info */}
+            <div className="rounded-2xl bg-gradient-to-r from-cyan-50 to-violet-50 p-4">
+              <p className="text-sm font-semibold text-slate-800">
+                Platform Status
+              </p>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Everything looks stable and operational.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -161,17 +161,39 @@ const Footer = () => {
     <footer className="bg-white border-t border-gray-200 text-slate-600">
       <div className="max-w-7xl mx-auto py-10 px-6 flex flex-col md:flex-row justify-between gap-10">
         {/* Logo & About */}
+        {/* Logo & About */}
         <div className="flex flex-col gap-4 max-w-sm">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-              <HeartPlus className="w-6 h-6 text-white" />
+          <Link href="/" className="group flex items-center gap-3">
+            <div className="relative h-12 w-12 rounded-[1.35rem] bg-slate-950 p-[2px] shadow-xl shadow-cyan-500/20">
+              <div className="absolute inset-0 rounded-[1.35rem] bg-gradient-to-br from-emerald-400 via-cyan-400 to-sky-500 opacity-90 blur-[2px]" />
+
+              <div className="relative h-full w-full rounded-[1.2rem] bg-slate-950 flex items-center justify-center overflow-hidden">
+                <div className="absolute -top-4 -right-4 h-8 w-8 rounded-full bg-cyan-400/30 blur-xl" />
+                <div className="absolute -bottom-4 -left-4 h-8 w-8 rounded-full bg-emerald-400/30 blur-xl" />
+
+                <div className="relative flex items-center justify-center rotate-[-18deg]">
+                  <div className="h-7 w-4 rounded-full bg-gradient-to-b from-cyan-300 to-emerald-400" />
+                  <div className="absolute h-1.5 w-7 rounded-full bg-white" />
+                  <div className="absolute h-7 w-1.5 rounded-full bg-white" />
+                </div>
+              </div>
             </div>
-            <span className="text-2xl font-bold text-blue-700">
-              {" "}
-              HealthPlus+
-            </span>
+
+            <div className="leading-none">
+              <h1 className="text-2xl font-black tracking-tight text-slate-900">
+                Medi
+                <span className="bg-gradient-to-r from-emerald-500 to-cyan-500 bg-clip-text text-transparent">
+                  Care
+                </span>
+              </h1>
+
+              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">
+                Smart Health
+              </p>
+            </div>
           </Link>
-          <p className="text-sm">
+
+          <p className="text-sm leading-relaxed text-slate-500">
             Your trusted platform for online doctor consultations, health
             checkups, prescriptions, and wellness tips — all in one place.
           </p>
@@ -181,7 +203,7 @@ const Footer = () => {
               <Link
                 href={item.link}
                 key={i}
-                className="w-10 h-10 bg-gray-100 flex items-center justify-center rounded-full hover:scale-105 transition"
+                className="w-10 h-10 rounded-2xl border border-slate-200 bg-white flex items-center justify-center hover:border-cyan-300 hover:shadow-lg hover:shadow-cyan-100 transition-all duration-300 hover:-translate-y-1"
               >
                 <item.icon />
               </Link>

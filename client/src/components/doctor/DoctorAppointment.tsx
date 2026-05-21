@@ -29,23 +29,48 @@ import { motion } from "framer-motion";
 
 const DoctorAppointmentContent = () => {
   const { user } = userAuthStore();
+
   const { appointments, fetchAppointments, loading, updateAppointmentStatus } =
     useAppointmentStore();
+
   const [activeTab, setActiveTab] = useState("upcoming");
-  const [tabCounts, setTabCounts] = useState({ upcoming: 0, past: 0 });
 
   useEffect(() => {
     if (user?.type === "doctor") {
-      fetchAppointments("doctor", activeTab);
+      // all appointments fetch karo, tab wise nahi
+      fetchAppointments("doctor");
     }
-  }, [user, activeTab, fetchAppointments]);
+  }, [user, fetchAppointments]);
 
-  useEffect(() => {
-    setTabCounts({
-      upcoming: upcomingAppointments.length,
-      past: pastAppointments.length,
-    });
-  }, [appointments]);
+  const ACTIVE_STATUSES = ["Scheduled", "In Progress"];
+  const PAST_STATUSES = ["Completed", "Cancelled", "Missed"];
+
+  const upcomingAppointments = appointments.filter((apt) => {
+    const start = new Date(apt.slotStartIso);
+
+    return (
+      !isNaN(start.getTime()) &&
+      start > new Date() &&
+      ACTIVE_STATUSES.includes(apt.status)
+    );
+  });
+
+  const pastAppointments = appointments.filter((apt) => {
+    const start = new Date(apt.slotStartIso);
+
+    return (
+      !isNaN(start.getTime()) &&
+      (start <= new Date() || PAST_STATUSES.includes(apt.status))
+    );
+  });
+
+  const tabCounts = {
+    upcoming: upcomingAppointments.length,
+    past: pastAppointments.length,
+  };
+
+  const filteredAppointments =
+    activeTab === "upcoming" ? upcomingAppointments : pastAppointments;
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("en-US", {
@@ -82,20 +107,6 @@ const DoctorAppointmentContent = () => {
   };
 
   if (!user) return null;
-
-  const now = new Date();
-
-  const upcomingAppointments = appointments.filter((apt) => {
-    const start = new Date(apt.slotStartIso);
-
-    return start > now && ["Scheduled", "In Progress"].includes(apt.status);
-  });
-
-  const pastAppointments = appointments.filter((apt) => {
-    const start = new Date(apt.slotStartIso);
-
-    return start <= now || ["Completed", "Cancelled"].includes(apt.status);
-  });
 
   const AppointmentCard = ({ appointment }: { appointment: Appointment }) => {
     const PrescriptionModal = PrescriptionViewModel as any;
@@ -362,9 +373,9 @@ const DoctorAppointmentContent = () => {
                     />
                   ))}
                 </div>
-              ) : appointments.length > 0 ? (
+              ) : upcomingAppointments.length > 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {upcomingAppointments.map((apt) => (
+                  {filteredAppointments.map((apt) => (
                     <AppointmentCard key={apt._id} appointment={apt} />
                   ))}
                 </div>
@@ -384,9 +395,9 @@ const DoctorAppointmentContent = () => {
                     />
                   ))}
                 </div>
-              ) : appointments.length > 0 ? (
+              ) : pastAppointments.length > 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {pastAppointments.map((apt) => (
+                  {filteredAppointments.map((apt) => (
                     <AppointmentCard key={apt._id} appointment={apt} />
                   ))}
                 </div>
