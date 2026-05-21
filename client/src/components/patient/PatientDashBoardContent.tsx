@@ -32,9 +32,13 @@ const PatientDashboardContent = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
   const [tabCounts, setTabCounts] = useState({ upcoming: 0, past: 0 });
 
+  const ACTIVE_STATUSES = ["Scheduled", "In Progress"];
+
+  const PAST_STATUSES = ["Completed", "Cancelled", "Missed"];
+
   useEffect(() => {
     if (user?.type === "patient") {
-      fetchAppointments("patient", activeTab);
+      fetchAppointments("patient");
     }
   }, [user, activeTab, fetchAppointments]);
 
@@ -42,18 +46,20 @@ const PatientDashboardContent = () => {
     const now = new Date();
     const upcoming = appointments.filter((apt) => {
       const aptDate = new Date(apt.slotStartIso);
+
       return (
-        (aptDate >= now || apt.status === "In Progress") &&
-        (apt.status === "Scheduled" || apt.status === "In Progress")
+        !isNaN(aptDate.getTime()) &&
+        aptDate > now &&
+        ACTIVE_STATUSES.includes(apt.status)
       );
     });
 
     const past = appointments.filter((apt) => {
       const aptDate = new Date(apt.slotStartIso);
+
       return (
-        aptDate < now ||
-        apt.status === "Completed" ||
-        apt.status === "Cancelled"
+        !isNaN(aptDate.getTime()) &&
+        (aptDate <= now || PAST_STATUSES.includes(apt.status))
       );
     });
 
@@ -408,7 +414,14 @@ const PatientDashboardContent = () => {
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {appointments
-                      .filter((apt) => new Date(apt.date) >= new Date())
+                      .filter((apt) => {
+                        const aptDate = new Date(apt.slotStartIso);
+
+                        return (
+                          aptDate > new Date() &&
+                          ACTIVE_STATUSES.includes(apt.status)
+                        );
+                      })
                       .map((apt) => (
                         <AppointmentCard key={apt._id} appointment={apt} />
                       ))}
@@ -438,9 +451,18 @@ const PatientDashboardContent = () => {
                 </div>
               ) : tabCounts.past > 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {appointments.map((apt) => (
-                    <AppointmentCard key={apt._id} appointment={apt} />
-                  ))}
+                  {appointments
+                    .filter((apt) => {
+                      const aptDate = new Date(apt.slotStartIso);
+
+                      return (
+                        aptDate <= new Date() ||
+                        PAST_STATUSES.includes(apt.status)
+                      );
+                    })
+                    .map((apt) => (
+                      <AppointmentCard key={apt._id} appointment={apt} />
+                    ))}
                 </div>
               ) : (
                 <EmptyState tab="past" />
