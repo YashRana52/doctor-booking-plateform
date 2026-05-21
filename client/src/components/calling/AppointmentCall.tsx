@@ -106,7 +106,7 @@ function AppointmentCall({
 
             const redirectPath =
               currentUser.role === "doctor"
-                ? "/doctor/dashboard"
+                ? `/doctor/dashboard?completedCall=${appointment._id}`
                 : "/patient/dashboard";
 
             window.location.href = redirectPath;
