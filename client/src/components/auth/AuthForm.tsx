@@ -111,7 +111,7 @@ function AuthForm({ type, userRole }: AuthFormProps) {
                   <Users className="w-10 h-10" />
                 )}
               </motion.div>
-              <h1 className="text-4xl font-bold tracking-tight">HealthPlus</h1>
+              <h1 className="text-4xl font-bold tracking-tight">MediCare</h1>
               <p className="mt-2 text-blue-100 text-lg">
                 {isSignup
                   ? userRole === "doctor"
@@ -155,7 +155,7 @@ function AuthForm({ type, userRole }: AuthFormProps) {
                     }
                     className="mt-2 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-xl"
                     placeholder={
-                      userRole === "doctor" ? "Dr.Yash Rana" : "Ritik Gupta"
+                      userRole === "doctor" ? "Dr.Yash Rana" : "Ritik Gupta..."
                     }
                   />
                 </motion.div>

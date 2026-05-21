@@ -27,7 +27,7 @@ export default function AuthHero() {
           className="text-center space-y-8 max-w-2xl"
         >
           <h2 className="text-6xl font-extrabold">
-            Healthcare <br /> That Cares
+            MediCare <br /> That Cares
           </h2>
 
           <p className="text-xl text-gray-200">

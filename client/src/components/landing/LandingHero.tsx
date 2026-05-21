@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 function LandingHero() {
-  const { isAuthenticated } = userAuthStore();
+  const { isAuthenticated, user } = userAuthStore();
   const router = useRouter();
 
   const handleBookNow = () => {
@@ -121,16 +121,21 @@ flex flex-col items-center lg:items-start text-center lg:text-left"
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
 
-              <Link href="/login/doctor" className="w-full sm:w-auto lg:w-auto">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="h-14 sm:h-16 px-8 text-base sm:text-lg font-medium border-2 border-gray-800 hover:bg-gray-900 hover:text-white rounded-2xl transition-all w-full"
+              {!isAuthenticated && (
+                <Link
+                  href="/login/doctor"
+                  className="w-full sm:w-auto lg:w-auto"
                 >
-                  <Stethoscope className="w-5 h-5 mr-3" />
-                  Doctor Login
-                </Button>
-              </Link>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="h-14 sm:h-16 px-8 text-base sm:text-lg font-medium border-2 border-gray-800 hover:bg-gray-900 hover:text-white rounded-2xl transition-all w-full"
+                  >
+                    <Stethoscope className="w-5 h-5 mr-3" />
+                    Doctor Login
+                  </Button>
+                </Link>
+              )}
             </motion.div>
           </div>
 
