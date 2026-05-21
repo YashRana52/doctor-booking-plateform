@@ -29,9 +29,10 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://appointment-booking-plum.vercel.app",
+      "https://doctor-booking-plateform.vercel.app",
+      "https://doctor-booking-plateform-1w4f.vercel.app",
     ],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
